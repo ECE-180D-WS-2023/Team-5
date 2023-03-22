@@ -14,5 +14,3 @@ GameManager:
 RacketController:
   Uses an animation on swing command
   Uses a hitbox to detect if the ball is hit so it can apply a force to the ball
-PlayerMovement:
-  Implements player movement and sets boundaries that the player cannot cross
