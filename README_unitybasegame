@@ -1,0 +1,16 @@
+This readme pertains to the scripts for the base Unity game (general design)
+Code citations are in comments in the code
+Code descriptions can also be found in comments in the code
+
+General design descriptions (more detail in code comments)
+ComputerMovement:
+  Computer opponent tracks the ball with its movement as the ball approaches it
+  When the ball is moving away from the computer opponent, the computer will reset to the middle
+Ball:
+  When a point is scored, the ball will reset to the middle with a random force applied (strength and direction)
+GameManager:
+  Keeps track of scores and resetting the ball after score
+  Also implements play and pause feature
+RacketController:
+  Uses an animation on swing command
+  Uses a hitbox to detect if the ball is hit so it can apply a force to the ball
