@@ -1,11 +1,70 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-// https://forum.unity.com/threads/hinge-joint-2d-change-motor-speed.404402/ code for motor speed change from this forum, comment by Hassan-Kanso
+using System.Text;
+using System.Threading;
+using uPLibrary.Networking.M2Mqtt;
+using uPLibrary.Networking.M2Mqtt.Messages;
+//#include <deque>
 
 public class RacketController : MonoBehaviour
 {
+    //deque<double> dq1 = {0,0,0,0,0,0,0,0,0,0};
+
+    ///// MQTT broker settings
+    private string brokerAddress = "mqtt.eclipseprojects.io";
+    private int brokerPort = 1883;
+    private string clientId = "UnityClient";
+    private string topic = "arduino/unity";
+    private Quaternion orientation = Quaternion.identity;
+    public char action;
+    
+    // Unity object to update with received orientation
+    public GameObject targetObject;
+    
+    // MQTT client instance
+    private MqttClient mqttClient;
+    /////
+
+    void Start()
+    {
+        // Create MQTT client instance
+        mqttClient = new MqttClient(brokerAddress, brokerPort, false, null, null, MqttSslProtocols.None);
+
+        // Register callback for received MQTT messages
+        mqttClient.MqttMsgPublishReceived += OnMQTTMessageReceived;
+        
+        // Connect to MQTT broker
+        mqttClient.Connect(clientId);
+        
+        // Subscribe to MQTT topic
+        mqttClient.Subscribe(new string[] { topic }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });
+    }
+    private float w;
+    private float x;
+    private float y;
+    private float z;
+
+    private void OnMQTTMessageReceived(object sender, MqttMsgPublishEventArgs e)
+    {
+        // Parse received quaternion from message payload
+        string payload = Encoding.UTF8.GetString(e.Message);
+        print(payload);
+        /*string[] quaternionStrings = payload.Split("'");
+        w = float.Parse(quaternionStrings[0]);
+        x = float.Parse(quaternionStrings[1]);
+        y = float.Parse(quaternionStrings[2]);
+        z = float.Parse(quaternionStrings[3]);
+        orientation = new Quaternion(x, y, z, w);*/
+        action=payload[0];
+        //dq1.push_back(y);	
+        //dq1.pop_front();
+        // Update target object's rotation with received quaternion
+        //targetObject.transform.rotation = quaternion;
+        
+    }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public Animator animator;
 
     //delay between swings
@@ -21,36 +80,15 @@ public class RacketController : MonoBehaviour
 
     void Update()
     {
-        //was code for controlling racket swing with hingejoint but now using animation
-        /* HingeJoint2D hingeJoint2D = GetComponent<HingeJoint2D>();
-        JointMotor2D motor = hingeJoint2D.motor;
-
-        if(Input.GetKey(KeyCode.Q))
-        {
-            motor.motorSpeed = 350;
-            hingeJoint2D.useMotor = true;
-            hingeJoint2D.motor = motor;
-        }
-        else if(Input.GetKey(KeyCode.E))
-        {
-            motor.motorSpeed = -350;
-            hingeJoint2D.useMotor = true;
-            hingeJoint2D.motor = motor;
-        }
-        else
-        {
-            GetComponent<HingeJoint2D>().useMotor = false;
-        }
-        */
-
-        //Q for backhand and E for forehand
-        if(Input.GetKey(KeyCode.E))
+        if(action == 'f')
         {
             Forehand();
+            action = ' ';
         }
-        else if(Input.GetKey(KeyCode.Q))
+        else if(action == 'b')
         {
             Backhand();
+            action = ' ';
         }
     }
 
