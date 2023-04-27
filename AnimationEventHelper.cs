@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+//to use animation triggers, from https://www.youtube.com/watch?v=7vMHTUwtyNs
 public class AnimationEventHelper : MonoBehaviour
 {
     public UnityEvent OnForehandPerformed;
