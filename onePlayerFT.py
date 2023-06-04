@@ -5,6 +5,8 @@ import numpy as np
 # Load the cascade classifier
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
+addToFile = 0
+
 # 0. define callbacks - functions that run when events happen.
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -64,7 +66,7 @@ def sendToUnity(filename, data, buffersize):
         sent = True
 
     
-open("/Users/sraavyapradeep/Downloads/TennisGame/Assets/Scripts/facetrack.txt", "w").close()
+open("/Users/sraavyapradeep/Downloads/HopefulFixTennisGame/Assets/Scripts/facetrack.txt", "w").close()
 open("file_append.txt", "w").close()
 
 
@@ -180,8 +182,10 @@ while True:
 
             xVal = x
             print('x = ' + str(xVal))
-            # WRITE TO FILE HERE
-            sendToUnity('facetracking.txt', str(xVal) + '\n', 5)
+            if (addToFile % 1 == 0):
+                # WRITE TO FILE HERE
+                sendToUnity('facetracking.txt', str(xVal) + '\n', 5)
+            addToFile+=1
 
         
         # Display the direction of movement
